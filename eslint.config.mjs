@@ -1,5 +1,4 @@
 import withNuxt from "./.nuxt/eslint.config.mjs";
-import prettierPlugin from "eslint-plugin-prettier";
 import stylistic from "@stylistic/eslint-plugin";
 import jsonc from "eslint-plugin-jsonc";
 import jsoncParser from "jsonc-eslint-parser";
@@ -7,12 +6,35 @@ import { globalIgnores } from "eslint/config";
 
 export default withNuxt(globalIgnores([".config/*", "node_modules/*"]), {
     plugins: {
-        prettier: prettierPlugin,
         "@stylistic": stylistic,
         jsonc: jsonc,
     },
     rules: {
-        "prettier/prettier": "error",
+        "@stylistic/semi": ["error", "always"],
+        "@stylistic/comma-dangle": ["error", "always-multiline"],
+        "@stylistic/max-len": ["error", { code: 120 }],
+        "@stylistic/arrow-parens": ["error", "always"],
+        "@stylistic/indent": ["error", 4],
+        "@stylistic/no-tabs": "error",
+        "@stylistic/brace-style": ["error", "1tbs", { allowSingleLine: true }],
+        "@stylistic/object-curly-newline": [
+            "error",
+            {
+                multiline: true,
+                consistent: true,
+            },
+        ],
+        "@stylistic/quotes": ["error", "double"],
+        "@stylistic/object-curly-spacing": ["error", "always"],
+        "@stylistic/array-bracket-spacing": ["error", "never"],
+        "@stylistic/space-before-function-paren": [
+            "error",
+            {
+                anonymous: "always",
+                named: "never",
+                asyncArrow: "always",
+            },
+        ],
         "@stylistic/no-trailing-spaces": "error",
         "@stylistic/no-multiple-empty-lines": [
             "error",
@@ -65,7 +87,6 @@ export default withNuxt(globalIgnores([".config/*", "node_modules/*"]), {
         "prefer-const": "error",
     },
 }).append({
-    ignores: ["package-lock."],
     files: ["**/*.json", "**/*.jsonc"],
     languageOptions: {
         parser: jsoncParser,
@@ -75,7 +96,7 @@ export default withNuxt(globalIgnores([".config/*", "node_modules/*"]), {
         prettier: prettierPlugin,
     },
     rules: {
-        "prettier/prettier": "error",
+        "@stylistic/indent": ["error", 4],
         "jsonc/comma-dangle": ["error", "never"],
     },
 });
