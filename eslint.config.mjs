@@ -12,7 +12,13 @@ export default withNuxt(globalIgnores([".config/*", "node_modules/*"]), {
     rules: {
         "@stylistic/semi": ["error", "always"],
         "@stylistic/comma-dangle": ["error", "always-multiline"],
-        "@stylistic/max-len": ["error", { code: 120 }],
+        "@stylistic/max-len": ["error", {
+            code: 120,
+            ignoreUrls: true,
+            ignoreRegExpLiterals: true,
+            ignoreComments: false,
+            ignoreTrailingComments: true,
+        }],
         "@stylistic/arrow-parens": ["error", "always"],
         "@stylistic/indent": ["error", 4],
         "@stylistic/no-tabs": "error",
@@ -72,31 +78,62 @@ export default withNuxt(globalIgnores([".config/*", "node_modules/*"]), {
                 next: "block-like",
             },
         ],
+        "vue/html-indent": ["error", 4, {
+            attribute: 1,
+            baseIndent: 1,
+            closeBracket: 0,
+            alignAttributesVertically: true,
+            ignores: [],
+        }],
+        "vue/script-indent": ["error", 4, {
+            baseIndent: 0,
+            switchCase: 1,
+            ignores: [],
+        }],
         "vue/html-self-closing": [
             "error",
             {
                 html: {
                     void: "always",
-                    normal: "always",
+                    normal: "never",
                     component: "always",
                 },
                 svg: "always",
                 math: "always",
             },
         ],
+        "vue/html-closing-bracket-newline": ["error", {
+            singleline: "never",
+            multiline: "always",
+        }],
+        "vue/html-closing-bracket-spacing": ["error", {
+            startTag: "never",
+            endTag: "never",
+            selfClosingTag: "always",
+        }],
+        "vue/max-attributes-per-line": ["error", {
+            singleline: { max: 3 },
+            multiline: { max: 1 },
+        }],
         "prefer-const": "error",
     },
-}).append({
+}, {
+    // JSON files configuration
     files: ["**/*.json", "**/*.jsonc"],
     languageOptions: {
         parser: jsoncParser,
     },
     plugins: {
+        "@stylistic": stylistic,  // Add stylistic plugin here too
         jsonc: jsonc,
-        prettier: prettierPlugin,
     },
     rules: {
-        "@stylistic/indent": ["error", 4],
+        // Use jsonc rules for JSON files
+        "jsonc/indent": ["error", 4],
         "jsonc/comma-dangle": ["error", "never"],
+
+        // Disable conflicting stylistic rules for JSON
+        "@stylistic/indent": "off",
+        "@stylistic/comma-dangle": "off",
     },
 });

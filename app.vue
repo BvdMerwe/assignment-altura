@@ -5,9 +5,7 @@ import "~/assets/tokens.css";
     <Head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-            rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
         <link rel="shortcut icon" href="logo_small.svg" />
     </Head>
     <main data-theme="light">
@@ -17,8 +15,8 @@ import "~/assets/tokens.css";
 
 <style>
 * {
-    margin: 0;
-    box-sizing: border-box;
+margin: 0;
+box-sizing: border-box;
 }
 
 html,
