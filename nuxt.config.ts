@@ -1,7 +1,17 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from "@tailwindcss/vite";
+import type { PluginOption } from "vite";
+
 export default defineNuxtConfig({
     compatibilityDate: "2024-11-01",
     devtools: { enabled: true },
+    modules: ["@nuxt/eslint", "shadcn-nuxt"],
+    css: ["~/assets/css/tailwind.css"],
+    vite: {
+        plugins: [
+            tailwindcss() as PluginOption,
+        ],
+    },
     nitro: {
         openAPI: {
             meta: {
@@ -16,5 +26,15 @@ export default defineNuxtConfig({
             },
         },
     },
-    modules: ["@nuxtjs/tailwindcss", "@nuxt/eslint"],
+    shadcn: {
+        /**
+         * Prefix for all the imported component
+         */
+        prefix: "",
+        /**
+         * Directory that the component lives in.
+         * @default "./components/ui"
+         */
+        componentDir: "./components/ui",
+    },
 });

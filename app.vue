@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import "~/assets/tokens.css";
+import "~/assets/css/tailwind.css";
 </script>
 <template>
     <Head>
