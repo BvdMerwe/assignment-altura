@@ -10,6 +10,11 @@ export default defineNuxtConfig({
                 version: "1.0",
             },
         },
+        routeRules: {
+            "/api/**": {
+                proxy: "https://directus.altura.io/**",
+            },
+        },
     },
     modules: ["@nuxtjs/tailwindcss", "@nuxt/eslint"],
 });

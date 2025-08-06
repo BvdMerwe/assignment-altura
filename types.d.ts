@@ -31,11 +31,17 @@ export interface DirectusTranslation {
      */
     key: string;
     /**
-     * Only available when authenticated, it contains all available variables that you can use in the translation values using `{ ... }`.
+     * Only available when authenticated, it contains all available variables that you can use in the translation
+     * values using `{ ... }`.
      */
     variables: null | string[];
     /**
      * An array with all different locales for the translation key.
      */
     translations: TranslationValue[];
+}
+
+export interface DirectusSchema {
+    translationKeys: DirectusTranslation[];
+    translationKeys_translations: TranslationValue[];
 }
