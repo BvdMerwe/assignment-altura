@@ -124,15 +124,12 @@ export default withNuxt(globalIgnores([".config/*", "node_modules/*"]), {
         parser: jsoncParser,
     },
     plugins: {
-        "@stylistic": stylistic,  // Add stylistic plugin here too
+        "@stylistic": stylistic,
         jsonc: jsonc,
     },
     rules: {
-        // Use jsonc rules for JSON files
         "jsonc/indent": ["error", 4],
         "jsonc/comma-dangle": ["error", "never"],
-
-        // Disable conflicting stylistic rules for JSON
         "@stylistic/indent": "off",
         "@stylistic/comma-dangle": "off",
     },
