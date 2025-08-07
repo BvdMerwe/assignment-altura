@@ -6,13 +6,40 @@ import { Input } from "~/components/ui/input";
 import { ref  } from "vue";
 import { watchDebounced } from "@vueuse/core";
 import type { DirectusTranslation } from "~/types";
+import DateRangePicker from "~/components/ui/filter/DateRangePicker.vue";
+import type { DateRange } from "reka-ui";
 
-const searchString = ref<string>("");
-const isLoading = ref<boolean>(false);
 const api = await useApi();
 const translations = ref<DirectusTranslation[]>(await api.list("translationKeys"));
 const count = ref<number>(await api.aggregate("translationKeys", "count"));
 const query = ref<QueryType>({});
+const dateRange = ref<DateRange>();
+const searchString = ref<string>("");
+const isLoading = ref<boolean>(false);
+
+watchDebounced(dateRange, async () => {
+    if (typeof dateRange.value === "undefined") {
+        return;
+    }
+
+    const { start, end } = dateRange.value;
+
+    if (start && end) {
+        query.value.filter = {
+            ...query.value.filter,
+            "updatedAt": {
+                "_between": [
+                    start.toString(), end.toString(),
+                ],
+            },
+
+        };
+    } else {
+        delete query.value.filter?.updatedAt;
+    }
+
+    await updateValues();
+});
 
 watchDebounced(searchString, async () => {
     isLoading.value = true;
@@ -21,6 +48,7 @@ watchDebounced(searchString, async () => {
         // Don't add a query.
     } else {
         query.value.filter = {
+            ...query.value.filter,
             "key": {
                 "_contains": searchString.value,
             },
@@ -50,7 +78,14 @@ async function setPage(page:number): Promise<void> {
                 v-model="searchString"
                 class="max-w-md"
             />
+            <DateRangePicker
+                v-model="dateRange"
+                placeholder="Select date range"
+                :number-of-months="1"
+                button-class="w-[200px]"
+            />
         </div>
+
         <DataTable
             :is-loading="isLoading"
             :columns="columns"

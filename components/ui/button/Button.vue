@@ -14,9 +14,6 @@ interface Props extends PrimitiveProps {
 
 const props = withDefaults(defineProps<Props>(), {
     as: "button",
-    variant: "default",
-    size: "default",
-    class: "cursor-pointer",
 });
 </script>
 
