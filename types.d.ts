@@ -39,6 +39,14 @@ export interface DirectusTranslation {
      * An array with all different locales for the translation key.
      */
     translations: TranslationValue[];
+    /**
+     * The time this key was created.
+     */
+    createdAt: string;
+    /**
+     * The last time this key was updated.
+     */
+    updatedAt: string;
 }
 
 export interface DirectusSchema {

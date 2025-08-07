@@ -1,15 +1,14 @@
 <script lang="ts" setup>
 import { useApi } from "~/composables/useApi";
+import DataTable from "~/components/ui/data-table/DataTable.vue";
+import { columns } from "~/components/definitions/columns";
 
 const api = await useApi();
 const translations = await api.list("translationKeys");
+
+console.log(translations);
 const count = await api.aggregate("translationKeys", "count");
 </script>
 <template>
-    <div class="container my-8 px-8">
-        <h1 class="">Init: {{ count }}</h1>
-        <div v-for="translation in translations" :key="translation.key">
-            {{translation.key}}
-        </div>
-    </div>
+    <DataTable :columns="columns" :data="translations" />
 </template>
