@@ -6,7 +6,7 @@ import {
     DateFormatter,
     getLocalTimeZone,
 } from "@internationalized/date";
-import { CalendarIcon } from "lucide-vue-next";
+import { CalendarIcon, X } from "lucide-vue-next";
 import { computed } from "vue";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -66,7 +66,7 @@ function clearRange() {
                         <span>{{ df.format(value.start.toDate(getLocalTimeZone())) }} - {{ df.format(value.end.toDate(getLocalTimeZone())) }}</span>
 
                         <div class="absolute right-3 top-2 cursor-pointer" @click="clearRange">
-                            x
+                            <X />
                         </div>
                     </template>
 
