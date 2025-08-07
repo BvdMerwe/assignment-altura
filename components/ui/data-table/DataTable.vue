@@ -1,9 +1,11 @@
 <script setup lang="ts" generic="TData, TValue">
 import type { ColumnDef } from "@tanstack/vue-table";
+import { Button } from "@/components/ui/button";
 import {
     FlexRender,
     getCoreRowModel,
     useVueTable,
+    getPaginationRowModel,
 } from "@tanstack/vue-table";
 
 import {
@@ -24,6 +26,7 @@ const table = useVueTable({
     get data() { return props.data; },
     get columns() { return props.columns; },
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
 });
 </script>
 
@@ -62,5 +65,23 @@ const table = useVueTable({
                 </template>
             </TableBody>
         </Table>
+        <div class="flex items-center justify-end py-4 space-x-2">
+            <Button
+                variant="outline"
+                size="sm"
+                :disabled="!table.getCanPreviousPage()"
+                @click="table.previousPage()"
+            >
+                Previous
+            </Button>
+            <Button
+                variant="outline"
+                size="sm"
+                :disabled="!table.getCanNextPage()"
+                @click="table.nextPage()"
+            >
+                Next
+            </Button>
+        </div>
     </div>
 </template>

@@ -3,9 +3,17 @@ import type { DirectusTranslation } from "~/types";
 
 export type EndpointType = "translationKeys";
 
+interface QueryType {
+    fields: string[],
+    limit: number,
+    page: number,
+    search?: string,
+    filter?: { [key: string]: string }
+}
+
 export async function useApi() {
     const  { $directus, $readItems, $aggregate } = useNuxtApp();
-    const query = {
+    const queryDefault: QueryType = {
         fields: [
             "key",
             "variables",
@@ -15,6 +23,8 @@ export async function useApi() {
             "translations.value",
             "translations.languages_code",
         ],
+        limit: 10,
+        page: 1,
     };
 
     async function aggregate(endpoint: EndpointType, aggregateBy: string) {
@@ -31,11 +41,14 @@ export async function useApi() {
         return data.value?.[0][aggregateBy];
     }
 
-    async function list(endpoint: EndpointType) {
+    async function list(endpoint: EndpointType, query?: QueryType) {
         const { data } = await useAsyncData(
             endpoint,
             async () => {
-                return await $directus.request<DirectusTranslation[]>($readItems(endpoint, query));
+                return await $directus.request<DirectusTranslation[]>($readItems(endpoint, {
+                    ...queryDefault,
+                    ...query,
+                }));
             });
 
         return data.value ?? [];

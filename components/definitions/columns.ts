@@ -2,7 +2,8 @@ import { h } from "vue";
 import type { ColumnDef } from "@tanstack/vue-table";
 import type { DirectusTranslation, TranslationValue } from "~/types";
 import { dateDistanceOrNull } from "~/lib/DateLib";
-import { mapLanguageCodeToEmoji } from "~/lib/LanguageLib";
+import TranslationValuesComponent from "~/components/translation/TranslationValuesComponent.vue";
+import TranslationTableCellComponent from "~/components/translation/TranslationTableCellComponent.vue";
 
 export const columns: ColumnDef<DirectusTranslation>[] = [
     {
@@ -10,26 +11,29 @@ export const columns: ColumnDef<DirectusTranslation>[] = [
         header: () => h("div", { class: "text-start" }, "Key"),
         cell: ({ row }) => {
             // TODO: Add a copy to clipboard icon here.
-            return h("div", { class: "text-start font-mono" }, row.getValue("key"));
+            return h(TranslationTableCellComponent, {
+                class: "text-mono",
+                content: row.getValue<string>("key"),
+            });
         },
     },
     {
         accessorKey: "translations",
         header: () => h("div", { class: "text-start" }, "Translations"),
         cell: ({ row }) => {
-            return h(
-                "div",
-                { class: "" },
-                row.getValue<TranslationValue[]>("translations").map((value: TranslationValue) =>
+            const translations = row.getValue<TranslationValue[]>("translations");
+
+            return h("div",
+                { class: "flex gap-4" },
+                [
                     h(
-                        "div",
-                        { class: "flex gap-1" },
-                        [
-                            h("span", { title: value.languages_code }, mapLanguageCodeToEmoji(value.languages_code)),
-                            h("span", value.value),
-                        ],
+                        TranslationValuesComponent,
+                        {
+                            values: translations,
+                        },
                     ),
-                ));
+                ],
+            );
         },
     },
     {
@@ -37,9 +41,11 @@ export const columns: ColumnDef<DirectusTranslation>[] = [
         header: () => h("div", { class: "text-start" }, "Last updated"),
         cell: ({ row }) => {
             return h(
-                "div",
-                { class: "text-start" },
-                dateDistanceOrNull(row.getValue("updatedAt")) ?? "",
+                TranslationTableCellComponent,
+                {
+                    class: "max-w-sm text-xs",
+                    content: dateDistanceOrNull(row.getValue<string>("updatedAt")) ?? "",
+                },
             );
         },
     },
@@ -48,9 +54,11 @@ export const columns: ColumnDef<DirectusTranslation>[] = [
         header: () => h("div", { class: "text-start" }, "Created"),
         cell: ({ row }) => {
             return h(
-                "div",
-                { class: "text-start" },
-                dateDistanceOrNull(row.getValue("createdAt")) ?? "",
+                TranslationTableCellComponent,
+                {
+                    class: "max-w-sm text-xs",
+                    content: dateDistanceOrNull(row.getValue<string>("createdAt")) ?? "",
+                },
             );
         },
     },
