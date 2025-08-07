@@ -1,58 +1,92 @@
-<img src="public/goose.png" class="goose" style="width: 128px; height: 128px"/>
+# Translation Management System
 
-# Hello there, future goose!
+A Vue 3 + Nuxt application for managing translation keys with real-time search, filtering, and pagination capabilities.
 
-This is your technical assessment, in here we expect you to show the best you can do. We expect to see clean code and a good UI with accessibility in mind. We expect that this assessment won't take more than 8 hours.
+## Features
 
-## What we are looking for
+- **Translation Management**: View translation keys with their associated values across multiple languages
+- **Real-time Search**: Debounced search functionality for translation keys (minimum 3 characters)
+- **Date Range Filtering**: Filter translations by update date using an intuitive date range picker
+- **Pagination**: Configurable row limits with server-side pagination
+- **Responsive Data Table**: Clean, sortable table interface with loading states
 
-* A good code structure
-* Usage of composables
-* Code with extensibility in mind
-* Use up to date (s)css properties
-* Usage of typescript
-* Clear documentation (if it helps, add a readme.md)
+## Tech Stack
 
-## The assignment
+- **Framework**: Vue 3 + Nuxt 3
+- **UI Components**: [shadcn/vue](https://www.shadcn-vue.com/) components for reusability and customizability (everything in `components/ui`)
+- **Data Table**: TanStack Vue Table for advanced table functionality - with custom pagination to handle directus API calls
+- **Date Handling**: @internationalized/date for robust date operations
+- **Icons**: Lucide Vue Next for consistent iconography
+- **Backend**: Directus CMS integration via proxy
+- **Utilities**: VueUse for reactive utilities
 
-You are asked to create a overview of all translation keys in Altura. In this view you must be able to filter on `key`, Translation values in different locales and the `updatedAt` date.
+## Supported Languages (as fetched from https://directus.altura.io/items/translationKeys_translations?fields[]=languages_code&groupBy[]=languages_code)
 
-### Requirements
+- 🇩🇰 Danish (da-DK)
+- 🇩🇪 German (de-DE)
+- 🇬🇧 English UK (en-GB)
+- 🇫🇷 French (fr-FR)
+- 🇳🇱 Dutch (nl-NL)
 
-* I can see a list of all translation keys
-    * I can see the key, translation value and the last updated date
-    * When hovering over a row, I see a tooltip with the full translation value for each locale.
-* I can filter on keys using a search input
-* I can filter on translation keys using a date range
-* I can see on which page I am and how many pages there are
-    * I am able to change the page
-    * I am able to change the page size
-* When no keys are found, I see a empty state
+## API Integration
 
-The keys are hosted on our directus instance, you can it here:
+The application connects to Directus CMS through a **proxy configuration** in `nuxt.config.ts` to avoid CORS issues:
 
-`https://directus.altura.io/items/translationKeys`
+```ts
+nitro: {
+  routeRules: {
+    "/api/**": {
+      proxy: "https://directus.altura.io/**",
+    },
+  },
+}
+```
 
-We already took the liberty to write typescript types for you. You can find them in the `types.d.ts` file of this project.
+The application uses a custom `useApi` composable that provides:
 
-Documentation about filtering in the directus api can be found [here](https://directus.io/docs/guides/connect/filter-rules). One note to add is that you are allowed to use the directus sdk, but bonus points if you don't.
+- **Caching**: Automatic request caching with generated cache keys
+- **Aggregation**: Count and other aggregate operations
+- **Filtering**: Advanced filtering with date ranges and text search
+- **Pagination**: Server-side pagination support
 
-### How it should look
+## Key Components
 
-You can use the following design as a reference, but feel free to make it your own.
+### Data Management
+- `useApi` composable for Directus integration
+- Debounced search and filtering (300ms delay)
+- Reactive query building with filter management
 
-<img src="public/design.png" class="design" />
+### UI Components
+- `DateRangePicker` - Custom date range selection with calendar
+- `DataTable` - Advanced table with sorting and pagination
+- `TranslationValuesComponent` - Display translation values with language flags
 
-## Turning the assignment in
+### Utilities
+- Cache key generation for API requests
+- Date formatting and distance calculations
+- Language code to emoji mapping
+- Class name utilities for conditional styling
 
-You get 3 days to complete this assignment.
-We expect you to create a new repository on your own github account. You can use this repository as a template.
-When you are done, please send us a link to your repository. We will review your code and get back to you as soon as possible.
-If you want to make it private, you should add `roy-ermers` as a collaborator.
+## Usage
 
----
+The main interface provides:
+1. **Search bar** - Filter translation keys by text content
+2. **Date range picker** - Filter by last update date
+3. **Row limit selector** - Control pagination size
+4. **Data table** - View translations with sortable columns
 
-If you have any questions, feel free to ask! You can find me at:
+All filters work together and are applied with debouncing to optimize performance.
 
-[roy@altura.io](mailto:roy@altura.io)
-[LinkedIn](https://www.linkedin.com/in/roy-ermers-34b414186)
+## Why pnpm?
+
+This project uses **pnpm** instead of npm because:
+- **Faster installs**: Up to 2x faster than npm
+- **Disk efficiency**: Shared package store reduces disk usage
+- **Stricter dependencies**: Better dependency resolution
+- **Monorepo support**: Better handling of workspaces
+
+## Development
+
+The application follows Vue 3 composition API patterns with TypeScript for type safety. Components are designed to be reusable and prop-driven for maximum flexibility.
+
+It is recommended to develop with your IDE running `eslint --fix` on save to clean up any unwanted code style issues. The full breakdown of rules can be seen in the `eslint.config.mjs`.
