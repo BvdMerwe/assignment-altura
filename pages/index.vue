@@ -15,6 +15,7 @@ const count = ref<number>(await api.aggregate("translationKeys", "count"));
 const query = ref<QueryType>({});
 const dateRange = ref<DateRange>();
 const searchString = ref<string>("");
+const rowCountMaximum = ref<number>(20);
 const isLoading = ref<boolean>(false);
 
 watchDebounced(dateRange, async () => {
@@ -39,7 +40,15 @@ watchDebounced(dateRange, async () => {
     }
 
     await updateValues();
-});
+}, { debounce: 300 });
+
+watchDebounced(rowCountMaximum, async () => {
+    const { value } = rowCountMaximum;
+
+    query.value.limit = value;
+
+    await updateValues();
+}, { debounce: 300 });
 
 watchDebounced(searchString, async () => {
     const { value } = searchString;
@@ -85,6 +94,12 @@ async function setPage(page:number): Promise<void> {
                 placeholder="Select date range"
                 :number-of-months="1"
                 button-class="w-[200px]"
+            />
+
+            <Input
+                v-model="rowCountMaximum"
+                type="number"
+                class="max-w-[100px]"
             />
         </div>
 
