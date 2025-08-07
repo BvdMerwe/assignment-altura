@@ -1,7 +1,6 @@
 import type { Dictionary } from "~/types/common/Dictionary";
-import type { DataType } from "~/types/common/DataType";
 
-export function generateCacheKey(keyValue: DataType | Dictionary | Dictionary[]): string {
+export function generateCacheKey(keyValue: object | object[]): string {
     if (Array.isArray(keyValue)) {
         return keyValue.map((obj) => flattenObject(obj)).join("-");
     }
@@ -9,7 +8,7 @@ export function generateCacheKey(keyValue: DataType | Dictionary | Dictionary[])
     return flattenObject(keyValue);
 }
 
-function flattenObject(obj: DataType | Dictionary, prefix: string = ""): string {
+function flattenObject(obj: object, prefix: string = ""): string {
     const parts: string[] = [];
 
     for (const [key, value] of Object.entries(obj)) {

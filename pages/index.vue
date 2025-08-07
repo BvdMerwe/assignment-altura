@@ -42,15 +42,17 @@ watchDebounced(dateRange, async () => {
 });
 
 watchDebounced(searchString, async () => {
+    const { value } = searchString;
+
     isLoading.value = true;
 
-    if (searchString.value === "") {
-        // Don't add a query.
+    if (value === "" || value.length < 3) {
+        delete query.value.filter?.key;
     } else {
         query.value.filter = {
             ...query.value.filter,
             "key": {
-                "_contains": searchString.value,
+                "_contains": value,
             },
         };
     }
@@ -62,6 +64,7 @@ watchDebounced(searchString, async () => {
 
 async function updateValues(): Promise<void> {
     translations.value = await api.list("translationKeys", query.value);
+    count.value = await api.aggregate("translationKeys", "count", query.value);
 }
 
 async function setPage(page:number): Promise<void> {
@@ -71,9 +74,8 @@ async function setPage(page:number): Promise<void> {
 </script>
 <template>
     <div class="m-6">
-        <div>{{count}}</div>
         <div class="my-4 flex items-center space-x-2 w-full">
-            <img src="/public/goose.png" width="40" />
+            <img src="/public/goose.png" width="40" alt="logo" />
             <Input
                 v-model="searchString"
                 class="max-w-md"
@@ -86,6 +88,7 @@ async function setPage(page:number): Promise<void> {
             />
         </div>
 
+        <div class="mb-4">Total keys: {{count}}</div>
         <DataTable
             :is-loading="isLoading"
             :columns="columns"

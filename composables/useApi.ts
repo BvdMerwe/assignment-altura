@@ -32,12 +32,13 @@ export async function useApi() {
         page: QUERY_PAGE_INITIAL,
     };
 
-    async function aggregate(endpoint: EndpointType, aggregateBy: string) {
+    async function aggregate(endpoint: EndpointType, aggregateBy: string, query?: QueryType) {
         const { data } = await useAsyncData(
-            generateCacheKey(endpoint + aggregateBy),
+            generateCacheKey({ endpoint, aggregateBy, query: query ?? "" }),
             async () => {
                 return await $directus.request($aggregate(endpoint, {
                     aggregate: { [aggregateBy]: "*" },
+                    query,
                 }));
             },
         );
@@ -64,8 +65,6 @@ export async function useApi() {
 
         return data.value ?? [];
     }
-
-    // TODO: Add fetch/update/create
 
     return { list, aggregate };
 }
