@@ -1,7 +1,9 @@
 <script setup lang="ts">
-const { content } = defineProps<{
+interface PropType {
     content: string
-}>();
+}
+
+const { content } = defineProps<PropType>();
 </script>
 <template>
     <div class="text-start font-mono">{{content}}</div>

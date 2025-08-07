@@ -5,12 +5,22 @@ import { dateDistanceOrNull } from "~/lib/DateLib";
 import TranslationValuesComponent from "~/components/translation/TranslationValuesComponent.vue";
 import TranslationTableCellComponent from "~/components/translation/TranslationTableCellComponent.vue";
 
-export const columns: ColumnDef<DirectusTranslation>[] = [
+/**
+ * Column definitions for the translation data table.
+ *
+ * Defines the structure and rendering logic for each column in the translations table,
+ * including key display, translation values, and timestamp formatting.
+ *
+ * @example
+ * ```ts
+ * <DataTable :columns="translationTableColumns" :data="translations" />
+ * ```
+ */
+export const translationTableColumns: ColumnDef<DirectusTranslation>[] = [
     {
         accessorKey: "key",
         header: () => h("div", { class: "text-start" }, "Key"),
         cell: ({ row }) => {
-            // TODO: Add a copy to clipboard icon here.
             const key = row.getValue<string>("key");
 
             return h(TranslationTableCellComponent, {

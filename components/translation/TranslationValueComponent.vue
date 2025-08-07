@@ -3,7 +3,12 @@ import { mapLanguageCodeToEmoji } from "~/lib/LanguageLib";
 import type { TranslationValue } from "~/types";
 import { cn } from "~/lib/utils";
 
-const { value, shouldClip } = defineProps<{ value: TranslationValue, shouldClip?: boolean }>();
+interface PropType {
+    value: TranslationValue,
+    shouldClip?: boolean
+}
+
+const { value, shouldClip } = defineProps<PropType>();
 </script>
 <template>
     <div

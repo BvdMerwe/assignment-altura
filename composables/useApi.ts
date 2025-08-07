@@ -1,24 +1,38 @@
 import { useAsyncData } from "#app";
 import type { DirectusTranslation } from "~/types";
-import type { Dictionary } from "~/types/common/Dictionary";
 import { generateCacheKey } from "~/lib/ApiLib";
-
-export type EndpointType = "translationKeys";
-
-export interface QueryType {
-    fields?: string[],
-    limit?: number,
-    page?: number,
-    search?: string,
-    filter?: Dictionary
-}
+import type { ApiQueryType } from "~/types/api/ApiQueryType";
+import type { ApiEndpointType } from "~/types/api/ApiEndpointType";
 
 const QUERY_PAGE_SIZE_LIMIT = 20;
 const QUERY_PAGE_INITIAL = 1;
 
+/**
+ * Composable for making API requests to Directus endpoints
+ *
+ * Provides methods for fetching and aggregating data with caching support.
+ * Uses Nuxt"s `useAsyncData` for automatic server-side rendering and client-side hydration.
+ *
+ * @returns Object containing API methods
+ *
+ * @example
+ * ```ts
+ * const { list, aggregate } = await useApi();
+ *
+ * // Fetch translation keys with custom query
+ * const translations = await list("translationKeys", {
+ *   limit: 10,
+ *   search: "welcome",
+ *   fields: ["key", "translations"]
+ * });
+ *
+ * // Get total count of translation keys
+ * const totalCount = await aggregate("translationKeys", "count");
+ * ```
+ */
 export async function useApi() {
     const  { $directus, $readItems, $aggregate } = useNuxtApp();
-    const queryDefault: QueryType = {
+    const queryDefault: ApiQueryType = {
         fields: [
             "key",
             "variables",
@@ -32,7 +46,28 @@ export async function useApi() {
         page: QUERY_PAGE_INITIAL,
     };
 
-    async function aggregate(endpoint: EndpointType, aggregateBy: string, query?: QueryType) {
+    /**
+     * Performs aggregation operations on the specified endpoint
+     *
+     * @param endpoint - The API endpoint to query
+     * @param aggregateBy - The field to aggregate by (e.g., "count", "sum", "avg")
+     * @param query - Optional query parameters to filter the aggregation
+     * @returns Promise resolving to the aggregated value
+     *
+     * @throws {Error} When unable to retrieve aggregation data
+     *
+     * @example
+     * ```ts
+     * // Get total count of translation keys
+     * const count = await aggregate("translationKeys", "count");
+     *
+     * // Get count with filters
+     * const filteredCount = await aggregate("translationKeys", "count", {
+     *   filter: { status: "published" }
+     * });
+     * ```
+     */
+    async function aggregate(endpoint: ApiEndpointType, aggregateBy: string, query?: ApiQueryType) {
         const { data } = await useAsyncData(
             generateCacheKey({ endpoint, aggregateBy, query: query ?? "" }),
             async () => {
@@ -50,7 +85,28 @@ export async function useApi() {
         return data.value?.[0][aggregateBy];
     }
 
-    async function list(endpoint: EndpointType, query?: QueryType) {
+    /**
+     * Fetches a list of items from the specified endpoint
+     *
+     * @param endpoint - The API endpoint to query
+     * @param query - Optional query parameters to customize the request
+     * @returns Promise resolving to an array of DirectusTranslation objects
+     *
+     * @example
+     * ```ts
+     * // Fetch with default settings
+     * const translations = await list('translationKeys');
+     *
+     * // Fetch with custom pagination and search
+     * const searchResults = await list('translationKeys', {
+     *   page: 2,
+     *   limit: 50,
+     *   search: 'error',
+     *   fields: ['key', 'translations.value']
+     * });
+     * ```
+     */
+    async function list(endpoint: ApiEndpointType, query?: ApiQueryType) {
         const queryCurrent = {
             ...queryDefault,
             ...query,

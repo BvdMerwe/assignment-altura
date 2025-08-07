@@ -1,23 +1,25 @@
 <script lang="ts" setup>
-import { type QueryType, useApi } from "~/composables/useApi";
+import { useApi } from "~/composables/useApi";
 import DataTable from "~/components/ui/data-table/DataTable.vue";
-import { columns } from "~/components/definitions/columns";
+import { translationTableColumns } from "~/components/definitions/TranslationTableColumns";
 import { Input } from "~/components/ui/input";
-import { ref  } from "vue";
+import { ref } from "vue";
 import { watchDebounced } from "@vueuse/core";
 import type { DirectusTranslation } from "~/types";
 import DateRangePicker from "~/components/ui/filter/DateRangePicker.vue";
 import type { DateRange } from "reka-ui";
+import type { ApiQueryType } from "~/types/api/ApiQueryType";
 
 const api = await useApi();
 const translations = ref<DirectusTranslation[]>(await api.list("translationKeys"));
 const count = ref<number>(await api.aggregate("translationKeys", "count"));
-const query = ref<QueryType>({});
+const query = ref<ApiQueryType>({});
 const dateRange = ref<DateRange>();
 const searchString = ref<string>("");
 const rowCountMaximum = ref<number>(20);
 const isLoading = ref<boolean>(false);
 
+// Debounce the date range change, and create the query necessary to fetch the data. If not needed, delete the query.
 watchDebounced(dateRange, async () => {
     if (typeof dateRange.value === "undefined") {
         return;
@@ -42,6 +44,7 @@ watchDebounced(dateRange, async () => {
     await updateValues();
 }, { debounce: 300 });
 
+// Debounce changing the row count, and create the query necessary to fetch the data. If not needed, delete the query.
 watchDebounced(rowCountMaximum, async () => {
     const { value } = rowCountMaximum;
 
@@ -50,6 +53,7 @@ watchDebounced(rowCountMaximum, async () => {
     await updateValues();
 }, { debounce: 300 });
 
+// Debounce search string changes, and create the query necessary to fetch the data. If not needed, delete the query.
 watchDebounced(searchString, async () => {
     const { value } = searchString;
 
@@ -106,7 +110,7 @@ async function setPage(page:number): Promise<void> {
         <div class="mb-4">Total keys: {{count}}</div>
         <DataTable
             :is-loading="isLoading"
-            :columns="columns"
+            :columns="translationTableColumns"
             :data="translations"
             :row-count="count"
             @set-page="setPage"

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-
 import type { TranslationValue } from "~/types";
 
-const { values } = defineProps<{
+interface PropType {
     values: TranslationValue[];
-}>();
+}
+
+const { values } = defineProps<PropType>();
 </script>
 <template>
     <div class="group relative w-full">

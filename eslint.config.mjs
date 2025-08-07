@@ -13,7 +13,7 @@ export default withNuxt(globalIgnores([".config/*", "node_modules/*"]), {
         "@stylistic/semi": ["error", "always"],
         "@stylistic/comma-dangle": ["error", "always-multiline"],
         "@stylistic/max-len": ["error", {
-            code: 120,
+            code: 150,
             ignoreUrls: true,
             ignoreRegExpLiterals: true,
             ignoreComments: false,
