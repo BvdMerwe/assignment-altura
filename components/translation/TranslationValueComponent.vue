@@ -1,14 +1,26 @@
 <script setup lang="ts">
 import { mapLanguageCodeToEmoji } from "~/lib/LanguageLib";
 import type { TranslationValue } from "~/types";
+import { cn } from "~/lib/utils";
 
-const { value } = defineProps<{ value: TranslationValue }>();
+const { value, shouldClip } = defineProps<{ value: TranslationValue, shouldClip?: boolean }>();
 </script>
 <template>
-    <div class="flex gap-2 max-w-2xl text-wrap">
+    <div
+        :class="cn(
+            'flex gap-2 max-w-[300px]',
+            {
+                'text-wrap': shouldClip === false
+            }
+        )"
+    >
         <span :title="value.languages_code">
             {{ mapLanguageCodeToEmoji(value.languages_code) }}
         </span>
-        <span>{{ value.value }}</span>
+        <span
+            :class="cn({
+                'overflow-hidden text-ellipsis': shouldClip
+            })"
+        >{{ value.value }}</span>
     </div>
 </template>

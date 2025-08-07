@@ -11,9 +11,12 @@ export const columns: ColumnDef<DirectusTranslation>[] = [
         header: () => h("div", { class: "text-start" }, "Key"),
         cell: ({ row }) => {
             // TODO: Add a copy to clipboard icon here.
+            const key = row.getValue<string>("key");
+
             return h(TranslationTableCellComponent, {
-                class: "text-mono",
-                content: row.getValue<string>("key"),
+                class: "text-mono max-w-[300px] overflow-hidden text-ellipsis",
+                title: key,
+                content: key,
             });
         },
     },

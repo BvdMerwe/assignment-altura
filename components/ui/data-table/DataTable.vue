@@ -5,7 +5,6 @@ import {
     FlexRender,
     getCoreRowModel,
     useVueTable,
-    getPaginationRowModel,
 } from "@tanstack/vue-table";
 
 import {
@@ -20,14 +19,69 @@ import {
 const props = defineProps<{
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    rowCount?: number
 }>();
+
+const pagination = ref<{
+    pageIndex: number;
+    pageSize: number;
+}>({
+    pageSize: props.data.length,
+    pageIndex: 0,
+});
+
+const emit = defineEmits(["setPage"]);
+
+const paginationDisplay = computed(() => {
+    const { pageIndex, pageSize } = pagination.value;
+    const end = pageIndex * pageSize + pageSize;
+    const totalRows = props.rowCount ?? props.data.length;
+    const rowIndexEnd = Math.min(end, totalRows);
+    const currentPage = pageIndex + 1;
+    const rowIndexStart = pageIndex * pageSize + 1;
+    const totalPages = Math.ceil((totalRows ?? 1) / pageSize);
+
+    return {
+        currentPage,
+        rowIndexStart,
+        rowIndexEnd,
+        totalPages,
+    };
+});
+
+const canPageNext = computed(() => {
+    if (props.rowCount ?? 0 > 0) {
+        const totalPages = Math.ceil((props.rowCount ?? 0) / pagination.value.pageSize);
+
+        return pagination.value.pageIndex < totalPages - 1;
+    } else {
+        return false;
+    }
+});
+
+const canPagePrevious = computed(() => {
+    return pagination.value.pageIndex > 0;
+});
 
 const table = useVueTable({
     get data() { return props.data; },
     get columns() { return props.columns; },
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    rowCount: props.rowCount ?? props.data.length,
+    manualPagination: true,
 });
+
+function pageNext() {
+    pagination.value.pageIndex += 1;
+
+    emit("setPage", pagination.value.pageIndex + 1);
+}
+
+function pagePrevious() {
+    pagination.value.pageIndex -= 1;
+
+    emit("setPage", pagination.value.pageIndex + 1);
+}
 </script>
 
 <template>
@@ -65,20 +119,24 @@ const table = useVueTable({
                 </template>
             </TableBody>
         </Table>
-        <div class="flex items-center justify-end py-4 space-x-2">
+        <div class="flex items-center justify-end py-4 space-x-2 px-4">
             <Button
                 variant="outline"
                 size="sm"
-                :disabled="!table.getCanPreviousPage()"
-                @click="table.previousPage()"
+                :disabled="canPagePrevious === false"
+                @click="pagePrevious()"
             >
                 Previous
             </Button>
+            <div class="text-xs opacity-75">
+                Page {{paginationDisplay.currentPage}} of {{paginationDisplay.totalPages}}
+                ({{paginationDisplay.rowIndexStart}} - {{paginationDisplay.rowIndexEnd}})
+            </div>
             <Button
                 variant="outline"
                 size="sm"
-                :disabled="!table.getCanNextPage()"
-                @click="table.nextPage()"
+                :disabled="canPageNext === false"
+                @click="pageNext()"
             >
                 Next
             </Button>

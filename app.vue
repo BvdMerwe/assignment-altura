@@ -16,7 +16,6 @@ import "~/assets/css/tailwind.css";
 
 <style>
 * {
-margin: 0;
 box-sizing: border-box;
 }
 
